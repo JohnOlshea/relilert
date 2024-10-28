@@ -12,16 +12,8 @@ import cookieSession from 'cookie-session';
 
 import logger from './logger';
 import { CLIENT_URL, NODE_ENV, PORT, SECRET_KEY_ONE, SECRET_KEY_TWO } from './config';
-
-const typeDefs = `#graphql
-    type User {
-        username: String
-    }
-
-    type Query {
-        user: User
-    }
-`
+import { mergedGQLSchema } from '@app/graphql/schema';
+import { GraphQLSchema } from 'graphql';
 
 const resolvers = {
     Query: {
@@ -39,8 +31,8 @@ export default class MonitorServer {
     constructor(app: Express) {
         this.app = app;
         this.httpServer = new http.Server(app);
-        const schema = makeExecutableSchema({
-            typeDefs, resolvers
+        const schema: GraphQLSchema = makeExecutableSchema({
+            typeDefs: mergedGQLSchema, resolvers
         });
         this.server = new ApolloServer({
             schema,
