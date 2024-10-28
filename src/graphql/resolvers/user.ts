@@ -1,16 +1,13 @@
 import { INotificationDocument } from '@app/interfaces/notification.interface';
 import { IUserDocument, IUserResponse } from '@app/interfaces/user.interface';
-import { createNotificationGroup, getAllNotificationGroups } from '@app/services/notification.service';
-import { createNewUser, getUserByProp, getUserBySocialId, getUserByUsernameOrEmail } from '@app/services/user.service';
+import { createNotification, getNotificationsByUserId } from '@app/services/notification.service';
+import { createUser, findUserByProperty, findUserBySocialId, findUserByUsernameOrEmail } from '@app/services/user.service';
 import { Request } from 'express';
 import { GraphQLError } from 'graphql';
 import { toLower, upperFirst } from 'lodash';
 import { sign } from 'jsonwebtoken';
 import { JWT_TOKEN } from '@app/server/config';
-import { authenticateGraphQLRoute, isEmail } from '@app/utils/utils';
 import { UserModel } from '@app/models/user.model';
-import { UserLoginRules, UserRegisterationRules } from '@app/validations';
-import { AppContext } from '@app/interfaces/monitor.interface';
 
 export const UserResolver = {
   Query: {
@@ -36,7 +33,7 @@ export const UserResolver = {
       await UserLoginRules.validate({ username, password }, { abortEarly: false });
       const isValidEmail = isEmail(username);
       const type: string = !isValidEmail ? 'username' : 'email';
-      const existingUser: IUserDocument | undefined = await getUserByProp(username, type);
+      const existingUser: IUserDocument | undefined = await findUserByProperty(username, type);
       if (!existingUser) {
         throw new GraphQLError('Invalid credentials');
       }
@@ -52,7 +49,7 @@ export const UserResolver = {
       const { user } = args;
       await UserRegisterationRules.validate(user, { abortEarly: false });
       const { username, email, password } = user;
-      const checkIfUserExist: IUserDocument | undefined = await getUserByUsernameOrEmail(username!, email!);
+      const checkIfUserExist: IUserDocument | undefined = await findUserByUsernameOrEmail(username!, email!);
       if (checkIfUserExist) {
         throw new GraphQLError('Invalid crendentials. Email or username.');
       }
@@ -61,7 +58,7 @@ export const UserResolver = {
         email: toLower(email),
         password
       } as IUserDocument;
-      const result: IUserDocument | undefined = await createNewUser(authData);
+      const result: IUserDocument | undefined = await createUser(authData);
       const response: IUserResponse = await userReturnValue(req, result, 'register');
       return response;
     },
@@ -70,7 +67,7 @@ export const UserResolver = {
       const { user } = args;
       await UserRegisterationRules.validate(user, { abortEarly: false });
       const { username, email, socialId, type } = user;
-      const checkIfUserExist: IUserDocument | undefined = await getUserBySocialId(socialId!, email!, type!);
+      const checkIfUserExist: IUserDocument | undefined = await findUserBySocialId(socialId!, email!, type!);
       if (checkIfUserExist) {
         const response: IUserResponse = await userReturnValue(req, checkIfUserExist, 'login');
         return response;
@@ -85,7 +82,7 @@ export const UserResolver = {
             googleId: socialId
           })
         } as IUserDocument;
-        const result: IUserDocument | undefined = await createNewUser(authData);
+        const result: IUserDocument | undefined = await createUser(authData);
         const response: IUserResponse = await userReturnValue(req, result, 'register');
         return response;
       }
