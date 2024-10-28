@@ -7,20 +7,18 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloServer } from '@apollo/server';
+import { ApolloServer, BaseContext } from '@apollo/server';
 import cookieSession from 'cookie-session';
 
 import logger from './logger';
 import { CLIENT_URL, NODE_ENV, PORT, SECRET_KEY_ONE, SECRET_KEY_TWO } from './config';
 import { mergedGQLSchema } from '@app/graphql/schema';
 import { GraphQLSchema } from 'graphql';
+import { resolvers } from '@app/graphql/resolvers';
 
-const resolvers = {
-    Query: {
-        user() {
-            return { username: 'Danny' };
-        }
-    }
+export interface AppContext {
+    req: Request;
+    res: Response;
 }
 
 export default class MonitorServer {
@@ -34,7 +32,7 @@ export default class MonitorServer {
         const schema: GraphQLSchema = makeExecutableSchema({
             typeDefs: mergedGQLSchema, resolvers
         });
-        this.server = new ApolloServer({
+        this.server = new ApolloServer<AppContext | BaseContext>({
             schema,
             introspection: NODE_ENV !== 'production',
             plugins: [
