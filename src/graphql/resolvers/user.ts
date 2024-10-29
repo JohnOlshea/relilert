@@ -10,6 +10,7 @@ import { JWT_TOKEN } from '@app/server/config';
 import { AppContext } from '@app/server/server';
 import { isEmail } from '@app/utils/utils';
 import { UserModel } from '@app/models/user.model';
+import { UserLoginRules, UserRegisterationRules } from '@app/validations';
 
 export const UserResolver = {
   Query: {
@@ -35,7 +36,7 @@ export const UserResolver = {
     async loginUser(_: undefined, args: { username: string; password: string }, contextValue: AppContext) {
       const { req } = contextValue;
       const { username, password } = args;
-      // TODO: validation
+      await UserLoginRules.validate({ username, password }, { abortEarly: false });
       const isValidEmail = isEmail(username);
       const type: string = !isValidEmail ? 'username' : 'email';
       const existingUser: IUserDocument | undefined = await getUserByProp(username, type);
@@ -52,7 +53,7 @@ export const UserResolver = {
     async registerUser(_: undefined, args: { user: IUserDocument }, contextValue: AppContext) {
       const { req } = contextValue;
       const { user } = args;
-      // TODO: validation
+      await UserRegisterationRules.validate(user, { abortEarly: false });
       const { username, email, password } = user;
       const checkIfUserExist: IUserDocument | undefined = await getUserByUsernameOrEmail(username!, email!);
       if (checkIfUserExist) {
@@ -70,7 +71,7 @@ export const UserResolver = {
     async authSocialUser(_: undefined, args: { user: IUserDocument }, contextValue: AppContext) {
       const { req } = contextValue;
       const { user } = args;
-      // TODO: validation
+      await UserRegisterationRules.validate(user, { abortEarly: false });
       const { username, email, socialId, type } = user;
       const checkIfUserExist: IUserDocument | undefined = await getUserBySocialId(socialId!, email!, type!);
       if (checkIfUserExist) {
