@@ -4,6 +4,11 @@ import { Model, Op } from 'sequelize';
 import dayjs from 'dayjs';
 import { getSingleNotificationGroup } from '@app/services/notification.service';
 
+const HTTP_TYPE = 'http';
+const TCP_TYPE = 'tcp';
+const MONGO_TYPE = 'mongodb';
+const REDIS_TYPE = 'redis';
+
 /**
  * Create a new monitor
  * @param data
@@ -163,7 +168,7 @@ export const updateMonitorStatus = async (monitor: IMonitorDocument, timestamp: 
   try {
     const now = timestamp ? dayjs(timestamp).toDate() : dayjs().toDate();
     const { id, status } = monitor;
-    const updatedMonitor: IMonitorDocument = {...monitor};
+    const updatedMonitor: IMonitorDocument = { ...monitor };
     updatedMonitor.status = type === 'success' ? 0 : 1;
     const isStatus = type === 'success' ? true : false;
     if (isStatus && status === 1) {
@@ -171,7 +176,7 @@ export const updateMonitorStatus = async (monitor: IMonitorDocument, timestamp: 
     } else if (!isStatus && status === 0) {
       updatedMonitor.lastChanged = now;
     }
-    await MonitorModel.update(updatedMonitor, { where: {id }});
+    await MonitorModel.update(updatedMonitor, { where: { id } });
     return updatedMonitor;
   } catch (error) {
     throw new Error(error);
@@ -195,6 +200,31 @@ export const deleteSingleMonitor = async (monitorId: number, userId: number, typ
     return result;
   } catch (error) {
     throw new Error(error);
+  }
+};
+
+/**
+ * Start uptime monitors
+ * @param monitor
+ * @param name
+ * @param type
+ */
+export const startCreatedMonitors = (monitor: IMonitorDocument, name: string, type: string): void => {
+  if (type === HTTP_TYPE) {
+    // httpStatusMonitor(monitor!, toLower(name));
+    console.log('http', monitor.name, name)
+  }
+  if (type === TCP_TYPE) {
+    // tcpStatusMonitor(monitor!, toLower(name));
+    console.log('tcp', monitor.name, name)
+  }
+  if (type === MONGO_TYPE) {
+    // mongoStatusMonitor(monitor!, toLower(name));
+    console.log('mongodb', monitor.name, name)
+  }
+  if (type === REDIS_TYPE) {
+    // redisStatusMonitor(monitor!, toLower(name));
+    console.log('redis', monitor.name, name)
   }
 };
 
