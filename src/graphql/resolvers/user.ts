@@ -8,7 +8,7 @@ import { toLower, upperFirst } from 'lodash';
 import { sign } from 'jsonwebtoken';
 import { JWT_TOKEN } from '@app/server/config';
 import { AppContext } from '@app/server/server';
-import { isEmail } from '@app/utils/utils';
+import { authenticateGraphQLRoute, isEmail } from '@app/utils/utils';
 import { UserModel } from '@app/models/user.model';
 import { UserLoginRules, UserRegisterationRules } from '@app/validations';
 
@@ -16,16 +16,13 @@ export const UserResolver = {
   Query: {
     async checkCurrentUser(_: undefined, __: undefined, contextValue: AppContext) {
       const { req } = contextValue;
-      if (!req.session?.jwt) {
-        throw new GraphQLError('No token');
-      }
-      // TODO: validate jwt
-      const notifications = await getAllNotificationGroups(3);
+      authenticateGraphQLRoute(req);
+      const notifications = await getAllNotificationGroups(req.currentUser!.id);
       return {
         user: {
-          id: 3,
-          username: 'admin',
-          email: 'admin@admin.com',
+          id: req.currentUser?.id,
+          username: req.currentUser?.username,
+          email: req.currentUser?.email,
           createdAt: new Date()
         },
         notifications
