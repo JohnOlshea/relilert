@@ -7,10 +7,10 @@ import { GraphQLError } from 'graphql';
 import { toLower, upperFirst } from 'lodash';
 import { sign } from 'jsonwebtoken';
 import { JWT_TOKEN } from '@app/server/config';
-import { AppContext } from '@app/server/server';
 import { authenticateGraphQLRoute, isEmail } from '@app/utils/utils';
 import { UserModel } from '@app/models/user.model';
 import { UserLoginRules, UserRegisterationRules } from '@app/validations';
+import { AppContext } from '@app/interfaces/monitor.interface';
 
 export const UserResolver = {
   Query: {

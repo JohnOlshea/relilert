@@ -15,11 +15,15 @@ import { CLIENT_URL, NODE_ENV, PORT, SECRET_KEY_ONE, SECRET_KEY_TWO } from './co
 import { mergedGQLSchema } from '@app/graphql/schema';
 import { GraphQLSchema } from 'graphql';
 import { resolvers } from '@app/graphql/resolvers';
+import { AppContext } from '@app/interfaces/monitor.interface';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import customFormat from 'dayjs/plugin/customParseFormat';
 
-export interface AppContext {
-    req: Request;
-    res: Response;
-}
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(customFormat);
 
 export default class MonitorServer {
     private app: Express;

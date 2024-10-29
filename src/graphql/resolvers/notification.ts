@@ -1,4 +1,4 @@
-import { AppContext } from '@app/server/server';
+import { AppContext } from '@app/interfaces/monitor.interface';
 import { INotificationDocument } from '@app/interfaces/notification.interface';
 import { createNotificationGroup, deleteNotificationGroup, getAllNotificationGroups, updateNotificationGroup } from '@app/services/notification.service';
 import { authenticateGraphQLRoute } from '@app/utils/utils';
