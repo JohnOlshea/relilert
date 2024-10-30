@@ -6,11 +6,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { FC, Fragment, ReactElement } from "react";
 import { FaEye } from "react-icons/fa";
+import { useRegister } from "./useRegister";
 
 const Register: FC = (): ReactElement => {
+  const { onRegisterSubmit } = useRegister();
+
   return (
     <div className="relative flex flex-col h-screen mx-auto w-11/12 max-w-md rounded-lg bg-white md:w-2/3">
-      <form>
+      <form action={onRegisterSubmit}>
         <div className="mt-12 w-full px-5">
           <div className="mb-5 flex flex-col justify-between text-gray-600">
             <Link href="/" className="w-24 flex mx-auto mb-4 cursor-pointer">
