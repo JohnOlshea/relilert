@@ -1,5 +1,4 @@
 import { AppContext, IMonitorArgs, IMonitorDocument } from '@app/interfaces/monitor.interface';
-import logger from '@app/server/logger';
 import {
   createMonitor,
   deleteSingleMonitor,
@@ -53,7 +52,6 @@ export const MonitorResolver = {
               monitors
             }
           });
-          logger.info(monitors[0].name);
         });
       } else {
         req.session = {

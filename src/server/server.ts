@@ -20,7 +20,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import customFormat from 'dayjs/plugin/customParseFormat';
-import { startMonitors } from '@app/utils/utils';
+import { enableAutoRefreshJob, startMonitors } from '@app/utils/utils';
 import { WebSocketServer, Server as WSServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 
@@ -124,10 +124,12 @@ export default class MonitorServer {
     }
 
     private webSocketConnection() {
-        this.wsServer.on('connection', () => {
-            console.log('websocket connect')
+        this.wsServer.on('connection', (_ws: WebSocket, req: http.IncomingMessage) => {
+          if (req.headers && req.headers.cookie) {
+            enableAutoRefreshJob(req.headers.cookie);
+          }
         });
-    }
+      }
 
     private async startServer(): Promise<void> {
         try {
