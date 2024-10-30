@@ -5,6 +5,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { FetchResult, useMutation } from "@apollo/client";
 import { REGISTER_USER } from "@/queries/auth";
 import { useRouter } from "next/navigation";
+import { showErrorToast } from "@/utils/utils";
 
 export const useRegister = (): IUserAuth => {
   const [validationErrors, setValidationErrors] = useState<RegisterType | LoginType>({
@@ -16,23 +17,33 @@ export const useRegister = (): IUserAuth => {
   const [registerUser, { loading }] = useMutation(REGISTER_USER);
 
   const onRegisterSubmit = async (formData: FormData): Promise<void> => {
-    const resultSchema = registerSchema.safeParse(Object.fromEntries(formData));
-    if (!resultSchema.success) {
-      setValidationErrors({
-        username: resultSchema.error.format().username?._errors[0]!,
-        email: resultSchema.error.format().email?._errors[0]!,
-        password: resultSchema.error.format().password?._errors[0]!
-      });
-    } else {
-      const result: FetchResult = await registerUser({
-        variables: { user: resultSchema.data }
-      });
-      if (result && result.data) {
-        // TODO: add to context
-        router.push('/');
+
+    try {
+
+
+
+      const resultSchema = registerSchema.safeParse(Object.fromEntries(formData));
+      if (!resultSchema.success) {
+        setValidationErrors({
+          username: resultSchema.error.format().username?._errors[0]!,
+          email: resultSchema.error.format().email?._errors[0]!,
+          password: resultSchema.error.format().password?._errors[0]!
+        });
+      } else {
+        const result: FetchResult = await registerUser({
+          variables: { user: resultSchema.data }
+        });
+        if (result && result.data) {
+          // TODO: add to context
+          router.push('/');
+        }
+        console.log(result)
       }
-      console.log(result)
+
+    } catch (error) {
+      showErrorToast('Invalid cred')
     }
+
   }
 
   return {
