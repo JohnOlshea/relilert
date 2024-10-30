@@ -8,15 +8,16 @@ import { FC, Fragment, ReactElement, useState } from "react";
 import { FaEye, FaEyeSlash, FaFacebookF, FaGoogle } from "react-icons/fa";
 import clsx from "clsx";
 import PageLoader from "@/components/PageLoader";
-import { useLogin } from "./useLogin";
+import { useLogin, useSocialLogin } from "./useLogin";
 
 const Login: FC = (): ReactElement => {
   const [passwordType, setPasswordType] = useState<string>('password');
   const { loading, validationErrors, setValidationErrors, onLoginSubmit } = useLogin();
+  const { loading: socialAuthLoading, authWithGoogle, authWithFacebook } = useSocialLogin();
 
   return (
     <div className="relative flex flex-col h-screen mx-auto w-11/12 max-w-md rounded-lg bg-white md:w-2/3">
-      {loading && <PageLoader />}
+      {socialAuthLoading && <PageLoader />}
       <form action={onLoginSubmit}>
         <div className="mt-12 w-full px-5">
           <div className="mb-5 flex flex-col justify-between text-gray-600">
@@ -111,12 +112,14 @@ const Login: FC = (): ReactElement => {
           icon={<FaGoogle className="mr-2 -ml-1 w-4 h-4" />}
           className="text-md w-full cursor-pointer rounded px-8 py-2 text-center font-bold text-white inline-flex items-center justify-center bg-[#4285F4] hover:bg-[#4285F4]/90 focus:outline-none"
           label="Sign In with Google"
+          onClick={authWithGoogle}
         />
         <Button
           type="button"
           icon={<FaFacebookF className="mr-2 -ml-1 w-4 h-4" />}
           className="text-md w-full mt-4 cursor-pointer rounded px-8 py-2 text-center font-bold text-white inline-flex items-center justify-center bg-[#3b5998] hover:bg-[#3b5998]/90 focus:outline-none"
           label="Sign In with Facebook"
+          onClick={authWithFacebook}
         />
       </div>
     </div>

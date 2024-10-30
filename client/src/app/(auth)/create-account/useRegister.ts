@@ -7,7 +7,7 @@ import { AUTH_SOCIAL_USER, REGISTER_USER } from "@/queries/auth";
 import { useRouter } from "next/navigation";
 import { showErrorToast } from "@/utils/utils";
 import { DispatchProps, MonitorContext } from "@/context/MonitorContext";
-import { Auth, getAuth, GoogleAuthProvider, signInWithPopup, UserCredential } from 'firebase/auth';
+import { Auth, FacebookAuthProvider, getAuth, GoogleAuthProvider, signInWithPopup, UserCredential } from 'firebase/auth';
 import firebaseApp from "../firebase";
 
 export const useRegister = (): IUserAuth => {
@@ -61,9 +61,25 @@ export const useSocialRegister = (): IUserAuth => {
     submitUserData(data as RegisterType, authSocialUser, dispatch, router);
   }
 
+  const registerWithFacebook = async (): Promise<void> => {
+    const provider = new FacebookAuthProvider();
+    const auth: Auth = getAuth(firebaseApp);
+    auth.useDeviceLanguage();
+    const userCredential: UserCredential = await signInWithPopup(auth, provider);
+    const nameList = userCredential.user.displayName!.split(' ');
+    const data = {
+      username: nameList[0],
+      email: userCredential.user.email,
+      socialId: userCredential.user.uid,
+      type: 'facebook'
+    };
+    submitUserData(data as RegisterType, authSocialUser, dispatch, router);
+  }
+
   return {
     loading,
     authWithGoogle: registerWithGoogle,
+    authWithFacebook: registerWithFacebook
   }
 }
 

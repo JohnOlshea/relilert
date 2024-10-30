@@ -13,7 +13,7 @@ import PageLoader from "@/components/PageLoader";
 const Register: FC = (): ReactElement => {
   const [passwordType, setPasswordType] = useState<string>('password');
   const { loading, validationErrors, setValidationErrors, onRegisterSubmit } = useRegister();
-  const { loading: socialAuthLoading, authWithGoogle } = useSocialRegister();
+  const { loading: socialAuthLoading, authWithGoogle, authWithFacebook } = useSocialRegister();
 
   return (
     <div className="relative flex flex-col h-screen mx-auto w-11/12 max-w-md rounded-lg bg-white md:w-2/3">
@@ -144,6 +144,7 @@ const Register: FC = (): ReactElement => {
           icon={<FaFacebookF className="mr-2 -ml-1 w-4 h-4" />}
           className="text-md w-full mt-4 cursor-pointer rounded px-8 py-2 text-center font-bold text-white inline-flex items-center justify-center bg-[#3b5998] hover:bg-[#3b5998]/90 focus:outline-none"
           label="Sign In with Facebook"
+          onClick={authWithFacebook}
         />
       </div>
     </div>
