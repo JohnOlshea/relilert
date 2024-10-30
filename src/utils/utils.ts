@@ -13,7 +13,7 @@ import { IHeartbeat } from "@app/interfaces/heartbeat.interface";
 import { sendEmail } from "./email";
 import { IEmailLocals } from "@app/interfaces/notification.interface";
 import { ISSLMonitorDocument } from "@app/interfaces/ssl.interface";
-import { getAllUsersActiveSSLMonitors, sslStatusMonitor } from "@app/services/ssl.service";
+import { getAllUsersActiveSSLMonitors, getSSLMonitorById, sslStatusMonitor } from "@app/services/ssl.service";
 
 export const appTimeZone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -166,6 +166,24 @@ export const locals = (): IEmailLocals => {
     appIcon: 'https://ibb.com/jD45fqX',
     appName: ''
   };
+};
+
+/**
+ * Get number of days between two dates
+ * @param {Date} start Start date
+ * @param {Date} end End date
+ * @returns {number} Number of days
+ */
+export const getDaysBetween = (start: Date, end: Date): number => {
+  return Math.round(Math.abs(+start - +end) / (1000 * 60 * 60 * 24));
+};
+
+export const getDaysRemaining = (start: Date, end: Date): number => {
+  const daysRemaining = getDaysBetween(start, end);
+  if (new Date(end).getTime() < new Date().getTime()) {
+    return -daysRemaining;
+  }
+  return daysRemaining;
 };
 
 /**

@@ -1,4 +1,3 @@
-import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
 import { AppContext, IMonitorArgs, IMonitorDocument } from '@app/interfaces/monitor.interface';
 import {
   createMonitor,
@@ -14,9 +13,10 @@ import {
 import { getSingleNotificationGroup } from '@app/services/notification.service';
 import { startSingleJob, stopSingleBackgroundJob } from '@app/utils/jobs';
 import { appTimeZone, authenticateGraphQLRoute, resumeMonitors, uptimePercentage } from '@app/utils/utils';
-import { PubSub } from 'graphql-subscriptions';
 import { some, toLower } from 'lodash';
-// import { some, toLower } from 'lodash';
+import { PubSub } from 'graphql-subscriptions';
+import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
+import { getCertificateInfo } from '@app/monitors/monitors';
 
 export const pubSub: PubSub = new PubSub();
 
@@ -25,6 +25,8 @@ export const MonitorResolver = {
     async getSingleMonitor(_: undefined, { monitorId }: { monitorId: string }, contextValue: AppContext) {
       const { req } = contextValue;
       authenticateGraphQLRoute(req);
+      const result = await getCertificateInfo('https://www.google.com');
+      console.log(result);
       const monitor: IMonitorDocument = await getMonitorById(parseInt(monitorId!));
       return {
         monitors: [monitor]
