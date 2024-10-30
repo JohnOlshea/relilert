@@ -1,10 +1,10 @@
 import { IUserAuth } from "@/interfaces/user.interface";
 import { useState } from "react";
 import { LoginType, registerSchema, RegisterType } from "../validations/auth";
-// import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { FetchResult, useMutation } from "@apollo/client";
 import { REGISTER_USER } from "@/queries/auth";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export const useRegister = (): IUserAuth => {
   const [validationErrors, setValidationErrors] = useState<RegisterType | LoginType>({
@@ -12,7 +12,7 @@ export const useRegister = (): IUserAuth => {
     password: '',
     email: ''
   });
-  // const router: AppRouterInstance = useRouter();
+  const router: AppRouterInstance = useRouter();
   const [registerUser, { loading }] = useMutation(REGISTER_USER);
 
   const onRegisterSubmit = async (formData: FormData): Promise<void> => {
@@ -27,6 +27,10 @@ export const useRegister = (): IUserAuth => {
       const result: FetchResult = await registerUser({
         variables: { user: resultSchema.data }
       });
+      if (result && result.data) {
+        // TODO: add to context
+        router.push('/');
+      }
       console.log(result)
     }
   }
