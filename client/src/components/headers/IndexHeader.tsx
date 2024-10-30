@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Link from 'next/link'
 import { FC, ReactElement, useEffect, useRef, useState } from 'react';
-import { FaTv } from 'react-icons/fa';
+import { FaAlignJustify, FaTimes, FaTv } from 'react-icons/fa';
 
 const IndexHeader: FC = (): ReactElement => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -34,7 +34,11 @@ const IndexHeader: FC = (): ReactElement => {
                 onClick={() => setMenuOpen(!menuOpen)}
               >
                 <div className="space-y-2">
-                  
+                  {!menuOpen ? (
+                    <FaAlignJustify className="text-2xl block text-gray-600" />
+                  ) : (
+                    <FaTimes className="text-2xl block text-gray-600" />
+                  )}
                 </div>
               </label>
             </div>
