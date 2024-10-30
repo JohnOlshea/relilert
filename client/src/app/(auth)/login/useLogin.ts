@@ -100,7 +100,7 @@ async function submitUserData(
           notifications: authType === 'social' ? authSocialUser.notifications : loginUser.notifications
         }
       });
-      router.push('/');
+      router.push('/status');
     }
   } catch (error) {
     showErrorToast('Invalid credentials');
