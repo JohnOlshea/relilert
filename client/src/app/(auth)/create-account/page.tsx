@@ -6,17 +6,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { FC, Fragment, ReactElement, useState } from "react";
 import { FaEye, FaEyeSlash, FaFacebookF, FaGoogle } from "react-icons/fa";
-import { useRegister } from "./useRegister";
+import { useRegister, useSocialRegister } from "./useRegister";
 import clsx from "clsx";
 import PageLoader from "@/components/PageLoader";
 
 const Register: FC = (): ReactElement => {
   const [passwordType, setPasswordType] = useState<string>('password');
   const { loading, validationErrors, setValidationErrors, onRegisterSubmit } = useRegister();
+  const { loading: socialAuthLoading, authWithGoogle } = useSocialRegister();
 
   return (
     <div className="relative flex flex-col h-screen mx-auto w-11/12 max-w-md rounded-lg bg-white md:w-2/3">
-      {loading && <PageLoader />}
+      {socialAuthLoading && <PageLoader />}
       <form action={onRegisterSubmit}>
         <div className="mt-12 w-full px-5">
           <div className="mb-5 flex flex-col justify-between text-gray-600">
@@ -136,6 +137,7 @@ const Register: FC = (): ReactElement => {
           icon={<FaGoogle className="mr-2 -ml-1 w-4 h-4" />}
           className="text-md w-full cursor-pointer rounded px-8 py-2 text-center font-bold text-white inline-flex items-center justify-center bg-[#4285F4] hover:bg-[#4285F4]/90 focus:outline-none"
           label="Sign In with Google"
+          onClick={authWithGoogle}
         />
         <Button
           type="button"
