@@ -2,19 +2,19 @@ import { IMonitorDocument } from '@app/interfaces/monitor.interface';
 import { MonitorModel } from '@app/models/monitor.model';
 import { Model, Op } from 'sequelize';
 import dayjs from 'dayjs';
-import { getSingleNotificationGroup } from '@app/services/notification.service';
-import { getHttpHeartBeatsByDuration, httpStatusMonitor } from './http.service';
 import { toLower } from 'lodash';
 import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
+import { getSingleNotificationGroup } from '@app/services/notification.service';
 import { uptimePercentage } from '@app/utils/utils';
 import { HttpModel } from '@app/models/http.model';
+import { MongoModel } from '@app/models/mongo.model';
 import { RedisModel } from '@app/models/redis.model';
 import { TcpModel } from '@app/models/tcp.model';
 
-import { getTcpHeartBeatsByDuration, tcpStatusMonitor } from './tcp.service';
+import { getHttpHeartBeatsByDuration, httpStatusMonitor } from './http.service';
 import { getMongoHeartBeatsByDuration, mongoStatusMonitor } from './mongo.service';
-import { MongoModel } from '@app/models/mongo.model';
 import { getRedisHeartBeatsByDuration, redisStatusMonitor } from './redis.service';
+import { getTcpHeartBeatsByDuration, tcpStatusMonitor } from './tcp.service';
 
 const HTTP_TYPE = 'http';
 const TCP_TYPE = 'tcp';
@@ -185,7 +185,7 @@ export const updateMonitorStatus = async (monitor: IMonitorDocument, timestamp: 
   try {
     const now = timestamp ? dayjs(timestamp).toDate() : dayjs().toDate();
     const { id, status } = monitor;
-    const updatedMonitor: IMonitorDocument = { ...monitor };
+    const updatedMonitor: IMonitorDocument = {...monitor};
     updatedMonitor.status = type === 'success' ? 0 : 1;
     const isStatus = type === 'success' ? true : false;
     if (isStatus && status === 1) {
@@ -193,7 +193,7 @@ export const updateMonitorStatus = async (monitor: IMonitorDocument, timestamp: 
     } else if (!isStatus && status === 0) {
       updatedMonitor.lastChanged = now;
     }
-    await MonitorModel.update(updatedMonitor, { where: { id } });
+    await MonitorModel.update(updatedMonitor, { where: {id }});
     return updatedMonitor;
   } catch (error) {
     throw new Error(error);

@@ -1,26 +1,30 @@
+import { IEmailLocals } from '@app/interfaces/notification.interface';
 import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
 import { IMonitorDocument, IMonitorResponse } from '@app/interfaces/monitor.interface';
 import logger from '@app/server/logger';
 import { getMonitorById, updateMonitorStatus } from '@app/services/monitor.service';
 import dayjs from 'dayjs';
 import { createMongoHeartBeat } from '@app/services/mongo.service';
+import { emailSender, locals } from '@app/utils/utils';
 
 import { mongodbPing } from './monitors';
 
 class MongoMonitor {
   errorCount: number;
   noSuccessAlert: boolean;
+  emailsLocals: IEmailLocals;
 
   constructor() {
     this.errorCount = 0;
     this.noSuccessAlert = true;
+    this.emailsLocals = locals();
   }
 
   async start(data: IMonitorDocument): Promise<void> {
     const { monitorId, url } = data;
     try {
       const monitorData: IMonitorDocument = await getMonitorById(monitorId!);
-
+      this.emailsLocals.appName = monitorData.name;
       const response: IMonitorResponse = await mongodbPing(url!);
       if (monitorData.connection !== response.status) {
         this.errorAssertionCheck(response.responseTime, monitorData);
@@ -50,7 +54,11 @@ class MongoMonitor {
     if (monitorData.alertThreshold > 0 && this.errorCount > monitorData.alertThreshold) {
       this.errorCount = 0;
       this.noSuccessAlert = false;
-      // TODO: send email
+      emailSender(
+        monitorData.notifications!.emails,
+        'errorStatus',
+        this.emailsLocals
+      );
     }
     logger.info(`MONGODB heartbeat failed assertions: Monitor ID ${monitorData.id}`);
   }
@@ -72,7 +80,11 @@ class MongoMonitor {
     if (!this.noSuccessAlert) {
       this.errorCount = 0;
       this.noSuccessAlert = true;
-      // send email
+      emailSender(
+        monitorData.notifications!.emails,
+        'successStatus',
+        this.emailsLocals
+      );
     }
     logger.info(`MONGODB heartbeat success: Monitor ID ${monitorData.id}`);
   }
@@ -94,7 +106,11 @@ class MongoMonitor {
     if (monitorData.alertThreshold > 0 && this.errorCount > monitorData.alertThreshold) {
       this.errorCount = 0;
       this.noSuccessAlert = false;
-      // TODO: send email
+      emailSender(
+        monitorData.notifications!.emails,
+        'errorStatus',
+        this.emailsLocals
+      );
     }
   }
 }

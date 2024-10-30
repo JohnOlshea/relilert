@@ -1,19 +1,22 @@
+import { IEmailLocals } from '@app/interfaces/notification.interface';
 import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
 import { IMonitorDocument } from '@app/interfaces/monitor.interface';
 import logger from '@app/server/logger';
 import { createHttpHeartBeat } from '@app/services/http.service';
 import { getMonitorById, updateMonitorStatus } from '@app/services/monitor.service';
-import { encodeBase64 } from '@app/utils/utils';
+import { emailSender, encodeBase64, locals } from '@app/utils/utils';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 
 class HttpMonitor {
   errorCount: number;
   noSuccessAlert: boolean;
+  emailsLocals: IEmailLocals;
 
   constructor() {
     this.errorCount = 0;
     this.noSuccessAlert = true;
+    this.emailsLocals = locals();
   }
 
   async start(data: IMonitorDocument): Promise<void> {
@@ -34,6 +37,7 @@ class HttpMonitor {
     const startTime: number = Date.now();
     try {
       const monitorData: IMonitorDocument = await getMonitorById(monitorId!);
+      this.emailsLocals.appName = monitorData.name;
       let basicAuthHeader = {};
       if (httpAuthMethod === 'basic') {
         basicAuthHeader = {
@@ -122,7 +126,11 @@ class HttpMonitor {
     if (monitorData.alertThreshold > 0 && this.errorCount > monitorData.alertThreshold) {
       this.errorCount = 0;
       this.noSuccessAlert = false;
-      // TOOD: send email
+      emailSender(
+        monitorData.notifications!.emails,
+        'errorStatus',
+        this.emailsLocals
+      );
     }
     logger.info(`HTTP heartbeat failed assertions: Monitor ID ${monitorData.id}`);
   }
@@ -135,7 +143,11 @@ class HttpMonitor {
     if (!this.noSuccessAlert) {
       this.errorCount = 0;
       this.noSuccessAlert = true;
-      // TODO: send email
+      emailSender(
+        monitorData.notifications!.emails,
+        'successStatus',
+        this.emailsLocals
+      );
     }
     logger.info(`HTTP heartbeat success: Monitor ID ${monitorData.id}`);
   }
@@ -161,7 +173,11 @@ class HttpMonitor {
     if (monitorData.alertThreshold > 0 && this.errorCount > monitorData.alertThreshold) {
       this.errorCount = 0;
       this.noSuccessAlert = false;
-      // TODO: send email
+      emailSender(
+        monitorData.notifications!.emails,
+        'errorStatus',
+        this.emailsLocals
+      );
     }
   }
 }

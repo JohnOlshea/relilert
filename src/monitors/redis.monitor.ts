@@ -4,26 +4,27 @@ import dayjs from 'dayjs';
 import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
 import { createRedisHeartBeat } from '@app/services/redis.service';
 import logger from '@app/server/logger';
-// import { IEmailLocals } from '@app/interfaces/notification.interface';
+import { IEmailLocals } from '@app/interfaces/notification.interface';
+import { emailSender, locals } from '@app/utils/utils';
 
 import { redisPing } from './monitors';
 
 class RedisMonitor {
   errorCount: number;
   noSuccessAlert: boolean;
-  // emailsLocals: IEmailLocals;
+  emailsLocals: IEmailLocals;
 
   constructor() {
     this.errorCount = 0;
     this.noSuccessAlert = true;
-    // this.emailsLocals = locals();
+    this.emailsLocals = locals();
   }
 
   async start(data: IMonitorDocument) {
     const { monitorId, url } = data;
     try {
       const monitorData: IMonitorDocument = await getMonitorById(monitorId!);
-      // this.emailsLocals.appName = monitorData.name;
+      this.emailsLocals.appName = monitorData.name;
       const response: IMonitorResponse = await redisPing(url!);
       this.assertionCheck(response, monitorData);
     } catch (error) {
@@ -59,7 +60,11 @@ class RedisMonitor {
       if (monitorData.alertThreshold > 0 && this.errorCount > monitorData.alertThreshold) {
         this.errorCount = 0;
         this.noSuccessAlert = false;
-        // TODO: send message
+        emailSender(
+          monitorData.notifications!.emails,
+          'errorStatus',
+          this.emailsLocals
+        );
       }
     } else {
       await Promise.all([
@@ -70,7 +75,11 @@ class RedisMonitor {
       if (!this.noSuccessAlert) {
         this.errorCount = 0;
         this.noSuccessAlert = true;
-        // TODO: send message
+        emailSender(
+          monitorData.notifications!.emails,
+          'successStatus',
+          this.emailsLocals
+        );
       }
     }
   }
@@ -95,7 +104,11 @@ class RedisMonitor {
     if (monitorData.alertThreshold > 0 && this.errorCount > monitorData.alertThreshold) {
       this.errorCount = 0;
       this.noSuccessAlert = false;
-      // TODO: send message
+      emailSender(
+        monitorData.notifications!.emails,
+        'errorStatus',
+        this.emailsLocals
+      );
     }
   }
 }

@@ -1,6 +1,6 @@
 import { IMonitorDocument } from "@app/interfaces/monitor.interface";
 import { IAuthPayload } from "@app/interfaces/user.interface";
-import { JWT_TOKEN } from "@app/server/config";
+import { CLIENT_URL, JWT_TOKEN } from "@app/server/config";
 import { getAllUsersActiveMonitors, getMonitorById, getUserActiveMonitors, startCreatedMonitors } from "@app/services/monitor.service";
 import { Request } from "express";
 import { GraphQLError } from "graphql";
@@ -10,6 +10,8 @@ import { startSingleJob } from "./jobs";
 import { pubSub } from "@app/graphql/resolvers/monitor";
 import logger from "@app/server/logger";
 import { IHeartbeat } from "@app/interfaces/heartbeat.interface";
+import { sendEmail } from "./email";
+import { IEmailLocals } from "@app/interfaces/notification.interface";
 
 export const appTimeZone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -119,6 +121,25 @@ export const uptimePercentage = (heartbeats: IHeartbeat[]): number => {
   const totalHeartbeats: number = heartbeats.length;
   const downtimeHeartbeats: number = heartbeats.filter((heartbeat: IHeartbeat) => heartbeat.status === 1).length;
   return Math.round(((totalHeartbeats - downtimeHeartbeats) / totalHeartbeats) * 100) || 0;
+};
+
+export const emailSender = async (notificationEmails: string,
+  template:
+  string,
+  locals: IEmailLocals
+): Promise<void> => {
+  const emails = JSON.parse(notificationEmails);
+  for(const email of emails) {
+    await sendEmail(template, email, locals);
+  }
+};
+
+export const locals = (): IEmailLocals => {
+  return {
+    appLink: `${CLIENT_URL}`,
+    appIcon: 'https://ibb.com/jD45fqX',
+    appName: ''
+  };
 };
 
 /**
