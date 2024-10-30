@@ -8,6 +8,10 @@ import { toLower } from 'lodash';
 import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
 import { uptimePercentage } from '@app/utils/utils';
 import { HttpModel } from '@app/models/http.model';
+import { RedisModel } from '@app/models/redis.model';
+import { TcpModel } from '@app/models/tcp.model';
+
+import { getTcpHeartBeatsByDuration, tcpStatusMonitor } from './tcp.service';
 import { getMongoHeartBeatsByDuration, mongoStatusMonitor } from './mongo.service';
 import { MongoModel } from '@app/models/mongo.model';
 import { getRedisHeartBeatsByDuration, redisStatusMonitor } from './redis.service';
@@ -230,7 +234,7 @@ export const getHeartbeats = async (type: string, monitorId: number, duration: n
     heartbeats = await getHttpHeartBeatsByDuration(monitorId, duration);
   }
   if (type === TCP_TYPE) {
-    console.log(monitorId, duration);
+    heartbeats = await getTcpHeartBeatsByDuration(monitorId, duration);
   }
   if (type === MONGO_TYPE) {
     heartbeats = await getMongoHeartBeatsByDuration(monitorId, duration);
@@ -252,8 +256,7 @@ export const startCreatedMonitors = (monitor: IMonitorDocument, name: string, ty
     httpStatusMonitor(monitor!, toLower(name));
   }
   if (type === TCP_TYPE) {
-    // tcpStatusMonitor(monitor!, toLower(name));
-    console.log('tcp', monitor.name, name)
+    tcpStatusMonitor(monitor!, toLower(name));
   }
   if (type === MONGO_TYPE) {
     mongoStatusMonitor(monitor!, toLower(name));
@@ -263,12 +266,6 @@ export const startCreatedMonitors = (monitor: IMonitorDocument, name: string, ty
   }
 };
 
-/**
- * Delete monitor with type heartbeats
- * @param type
- * @param monitorId
- * @returns {Promise<IHeartbeat[]>}
- */
 const deleteMonitorTypeHeartbeats = async (monitorId: number, type: string): Promise<void> => {
   let model = null;
   if (type === HTTP_TYPE) {
@@ -276,6 +273,12 @@ const deleteMonitorTypeHeartbeats = async (monitorId: number, type: string): Pro
   }
   if (type === MONGO_TYPE) {
     model = MongoModel;
+  }
+  if (type === REDIS_TYPE) {
+    model = RedisModel;
+  }
+  if (type === TCP_TYPE) {
+    model = TcpModel;
   }
 
   if (model !== null) {
