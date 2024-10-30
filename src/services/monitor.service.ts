@@ -7,6 +7,7 @@ import { getHttpHeartBeatsByDuration, httpStatusMonitor } from './http.service';
 import { toLower } from 'lodash';
 import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
 import { uptimePercentage } from '@app/utils/utils';
+import { HttpModel } from '@app/models/http.model';
 
 const HTTP_TYPE = 'http';
 const TCP_TYPE = 'tcp';
@@ -267,6 +268,15 @@ export const startCreatedMonitors = (monitor: IMonitorDocument, name: string, ty
  * @param monitorId
  * @returns {Promise<IHeartbeat[]>}
  */
-export const deleteMonitorTypeHeartbeats = async (monitorId: number, type: string): Promise<void> => {
-  console.log(monitorId, type)
+const deleteMonitorTypeHeartbeats = async (monitorId: number, type: string): Promise<void> => {
+  let model = null;
+  if (type === HTTP_TYPE) {
+    model = HttpModel;
+  }
+
+  if (model !== null) {
+    await model.destroy({
+      where: { monitorId }
+    });
+  }
 };
