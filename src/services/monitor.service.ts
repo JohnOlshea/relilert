@@ -3,6 +3,8 @@ import { MonitorModel } from '@app/models/monitor.model';
 import { Model, Op } from 'sequelize';
 import dayjs from 'dayjs';
 import { getSingleNotificationGroup } from '@app/services/notification.service';
+import { httpStatusMonitor } from './http.service';
+import { toLower } from 'lodash';
 
 const HTTP_TYPE = 'http';
 const TCP_TYPE = 'tcp';
@@ -211,8 +213,7 @@ export const deleteSingleMonitor = async (monitorId: number, userId: number, typ
  */
 export const startCreatedMonitors = (monitor: IMonitorDocument, name: string, type: string): void => {
   if (type === HTTP_TYPE) {
-    // httpStatusMonitor(monitor!, toLower(name));
-    console.log('http', monitor.name, name)
+    httpStatusMonitor(monitor!, toLower(name));
   }
   if (type === TCP_TYPE) {
     // tcpStatusMonitor(monitor!, toLower(name));
