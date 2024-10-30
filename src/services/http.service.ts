@@ -1,7 +1,7 @@
 import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
 import { IMonitorDocument } from '@app/interfaces/monitor.interface';
 import { HttpModel } from '@app/models/http.model';
-// import { httpMonitor } from '@app/monitors/http.monitor';
+import { httpMonitor } from '@app/monitors/http.monitor';
 import { startSingleJob } from '@app/utils/jobs';
 import { appTimeZone } from '@app/utils/utils';
 import dayjs from 'dayjs';
@@ -57,7 +57,6 @@ export const httpStatusMonitor = (monitor: IMonitorDocument, name: string): void
     bearerToken: monitor.bearerToken
   } as IMonitorDocument;
   startSingleJob(name, appTimeZone, monitor.frequency, async () =>
-    console.log(httpMonitorData)
-    // httpMonitor.start(httpMonitorData)
+    httpMonitor.start(httpMonitorData)
   );
 };

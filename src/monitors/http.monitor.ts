@@ -78,7 +78,7 @@ class HttpMonitor {
         monitorId: monitorId!,
         status: 0,
         code: response.status ?? 0,
-        message: `${response.status} - ${response.statusText}` ?? 'Http monitor check successful.',
+        message: `${response.status} - ${response.statusText}`,
         timestamp: dayjs.utc().valueOf(),
         reqHeaders: JSON.stringify(response.headers) ?? '',
         resHeaders: JSON.stringify(response.request.res.rawHeaders) ?? '',
