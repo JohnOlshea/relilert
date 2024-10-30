@@ -3,8 +3,9 @@ import { MonitorModel } from '@app/models/monitor.model';
 import { Model, Op } from 'sequelize';
 import dayjs from 'dayjs';
 import { getSingleNotificationGroup } from '@app/services/notification.service';
-import { httpStatusMonitor } from './http.service';
+import { getHttpHeartBeatsByDuration, httpStatusMonitor } from './http.service';
 import { toLower } from 'lodash';
+import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
 
 const HTTP_TYPE = 'http';
 const TCP_TYPE = 'tcp';
@@ -60,12 +61,17 @@ export const getUserMonitors = async (userId: number, active?: boolean): Promise
  */
 export const getUserActiveMonitors = async (userId: number): Promise<IMonitorDocument[]> => {
   try {
+    let heartbeats: IHeartbeat[] = [];
     const updatedMonitors: IMonitorDocument[] = [];
     const monitors: IMonitorDocument[] = await getUserMonitors(userId, true);
     for (let monitor of monitors) {
       const group = await getSingleNotificationGroup(monitor.notificationId!);
+      heartbeats = await getHeartbeats(monitor.type, monitor.id!, 24);
+      // TODO: calculate uptime
       monitor = {
         ...monitor,
+        uptime: 0,
+        heartbeats: heartbeats.slice(0, 16),
         notifications: group
       };
       updatedMonitors.push(monitor);
@@ -74,6 +80,7 @@ export const getUserActiveMonitors = async (userId: number): Promise<IMonitorDoc
   } catch (error) {
     throw new Error(error);
   }
+};
 };
 
 /**
@@ -203,6 +210,31 @@ export const deleteSingleMonitor = async (monitorId: number, userId: number, typ
   } catch (error) {
     throw new Error(error);
   }
+};
+
+/**
+ * Get monitor heartbeats
+ * @param type
+ * @param monitorId
+ * @param duration
+ * @returns {Promise<IHeartbeat[]>}
+ */
+export const getHeartbeats = async (type: string, monitorId: number, duration: number): Promise<IHeartbeat[]> => {
+  let heartbeats: IHeartbeat[] = [];
+
+  if (type === HTTP_TYPE) {
+    heartbeats = await getHttpHeartBeatsByDuration(monitorId, duration);
+  }
+  if (type === TCP_TYPE) {
+    console.log(monitorId, duration);
+  }
+  if (type === MONGO_TYPE) {
+    console.log(monitorId, duration);
+  }
+  if (type === REDIS_TYPE) {
+    console.log(monitorId, duration);
+  }
+  return heartbeats;
 };
 
 /**

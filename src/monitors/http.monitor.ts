@@ -107,7 +107,6 @@ class HttpMonitor {
         this.successAssertionCheck(monitorData, heartbeatData);
       }
     } catch (error) {
-      console.log(error)
       const monitorData: IMonitorDocument = await getMonitorById(monitorId!);
       this.httpError(monitorId!, startTime, monitorData, error);
     }
