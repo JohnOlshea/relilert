@@ -103,6 +103,17 @@ export const resumeMonitors = async (monitorId: number): Promise<void> => {
 };
 
 /**
+ * Resumes a single ssl monitor
+ * @param monitorId
+ * @returns {Promise<void>}
+ */
+export const resumeSSLMonitors = async (monitorId: number): Promise<void> => {
+  const monitor: ISSLMonitorDocument = await getSSLMonitorById(monitorId);
+  sslStatusMonitor(monitor, toLower(monitor.name));
+  await sleep(getRandomInt(300, 1000));
+};
+
+/**
  * Enables auto refresh cron job
  * @param cookies
  */
