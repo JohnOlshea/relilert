@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import IndexHeader from '@/components/headers/IndexHeader';
+import { FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import Link from 'next/link';
 import { FC, ReactElement, ReactNode } from 'react';
 
@@ -12,6 +13,23 @@ interface IFeature {
 }
 
 const Index: FC = (): ReactElement => {
+  const features: IFeature[] = [
+    {
+      icon: <FaCheckCircle className="text-green-500" />,
+      title: 'Real-time Monitoring',
+      description: 'Monitor service uptime in real-time and get instant notifications for downtime.'
+    },
+    {
+      icon: <FaCheckCircle className="text-green-500" />,
+      title: 'Easy Integration',
+      description: 'Integrate seamlessly with your existing tools and workflows.'
+    },
+    {
+      icon: <FaExclamationCircle className="text-red-500" />,
+      title: 'Alerting',
+      description: 'Get instant notification of potential issues before they impact your users.'
+    }
+  ];
   const monitors: string[] = ['HTTP/HTTPS', 'TCP', 'MONGODB', 'REDIS', 'SSL/TLS'];
 
   return (
@@ -45,13 +63,17 @@ const Index: FC = (): ReactElement => {
 
             <Section title="Key Features">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                
+                {features.map((feature, index) => (
+                  <Feature key={index} {...feature} />
+                ))}
               </div>
             </Section>
 
             <Section title="Monitors">
               <div className="grid grid-cols-1 gap-4">
-                
+                {monitors.map((monitor, index) => (
+                  <Feature key={index} icon={<FaCheckCircle className="text-green-500" />} title={monitor} />
+                ))}
               </div>
             </Section>
           </div>
