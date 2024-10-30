@@ -1,7 +1,9 @@
+import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
 import { AppContext, IMonitorArgs, IMonitorDocument } from '@app/interfaces/monitor.interface';
 import {
   createMonitor,
   deleteSingleMonitor,
+  getHeartbeats,
   getMonitorById,
   getUserActiveMonitors,
   getUserMonitors,
@@ -11,7 +13,7 @@ import {
 } from '@app/services/monitor.service';
 import { getSingleNotificationGroup } from '@app/services/notification.service';
 import { startSingleJob, stopSingleBackgroundJob } from '@app/utils/jobs';
-import { appTimeZone, authenticateGraphQLRoute, resumeMonitors } from '@app/utils/utils';
+import { appTimeZone, authenticateGraphQLRoute, resumeMonitors, uptimePercentage } from '@app/utils/utils';
 import { PubSub } from 'graphql-subscriptions';
 import { some, toLower } from 'lodash';
 // import { some, toLower } from 'lodash';
@@ -130,6 +132,14 @@ export const MonitorResolver = {
     notifications: (monitor: IMonitorDocument) => {
       return getSingleNotificationGroup(monitor.notificationId!);
     },
+    heartbeats: async (monitor: IMonitorDocument): Promise<IHeartbeat[]> => {
+      const heartbeats = await getHeartbeats(monitor.type, monitor.id!, 24);
+      return heartbeats.slice(0, 16);
+    },
+    uptime: async (monitor: IMonitorDocument): Promise<number> => {
+      const heartbeats: IHeartbeat[] = await getHeartbeats(monitor.type, monitor.id!, 24);
+      return uptimePercentage(heartbeats);
+    }
   },
   Subscription: {
     monitorsUpdated: {
