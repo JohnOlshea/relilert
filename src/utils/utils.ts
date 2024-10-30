@@ -12,6 +12,8 @@ import logger from "@app/server/logger";
 import { IHeartbeat } from "@app/interfaces/heartbeat.interface";
 import { sendEmail } from "./email";
 import { IEmailLocals } from "@app/interfaces/notification.interface";
+import { ISSLMonitorDocument } from "@app/interfaces/ssl.interface";
+import { getAllUsersActiveSSLMonitors, sslStatusMonitor } from "@app/services/ssl.service";
 
 export const appTimeZone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -72,6 +74,19 @@ export const startMonitors = async (): Promise<void> => {
 
   for(const monitor of list) {
     startCreatedMonitors(monitor, toLower(monitor.name), monitor.type);
+    await sleep(getRandomInt(300, 1000));
+  }
+};
+
+/**
+ * Starts all active ssl monitors
+ * @returns {Promise<void>}
+*/
+export const startSSLMonitors = async (): Promise<void> => {
+  const list: ISSLMonitorDocument[] = await getAllUsersActiveSSLMonitors();
+
+  for(const monitor of list) {
+    sslStatusMonitor(monitor, toLower(monitor.name));
     await sleep(getRandomInt(300, 1000));
   }
 };
