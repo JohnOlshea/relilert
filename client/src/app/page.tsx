@@ -104,7 +104,7 @@ const Section: FC<{ title: string; children: ReactNode }> = ({ title, children }
 const Footer: FC = (): ReactElement => (
   <footer className="bg-gray-900 text-white py-8 mt-auto">
     <div className="max-w-7xl mx-auto px-4">
-      <p className="text-center">&copy; {new Date().getFullYear()} Uptimer Dashboard. All rights reserved.</p>
+      <p className="text-center">&copy; {new Date().getFullYear()} Relilert Dashboard. All rights reserved.</p>
     </div>
   </footer>
 );

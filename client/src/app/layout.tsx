@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 dayjs.extend(relativeTime);
 
 export const metadata: Metadata = {
-  title: "Uptimer"
+  title: "Relilert"
 };
 
 export default function RootLayout({

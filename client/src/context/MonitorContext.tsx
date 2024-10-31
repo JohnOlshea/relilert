@@ -14,7 +14,7 @@ export interface StateProps {
 
 export interface DispatchProps {
   type: string;
-  payload: string | boolean | InitialUpdateType | null;
+  payload: string | boolean | InitialUpdateType | IMonitorDocument | null;
 }
 
 interface Props {
@@ -40,7 +40,7 @@ export const MonitorContext: Context<MonitorContextType> = createContext<Monitor
 const mainReducer = (state: StateProps, action: DispatchProps): StateProps => ({
   user: stateReducer(state, action).user,
   notifications: stateReducer(state, action).notifications,
-  monitor: state.monitor,
+  monitor: stateReducer(state, action).monitor,
 });
 
 export const MonitorProvider: FC<Props> = ({ children }): ReactElement => {
@@ -57,6 +57,9 @@ const stateReducer = (state: StateProps, action: DispatchProps): StateProps => {
     }
     case 'user': {
       return { ...state, user: action.payload as IUser };
+    }
+    case 'monitor': {
+      return { ...state, monitor: action.payload as IMonitorDocument };
     }
     default: {
       return state;

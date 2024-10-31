@@ -26,7 +26,7 @@ const IndexHeader: FC = (): ReactElement => {
             <div className="w-full flex justify-between items-center">
               <Link href="/" className="relative z-10 flex items-center gap-2 cursor-pointer justify-center self-center text-2xl font-semibold text-[#4aa1f3]">
                 <FaTv />
-                Uptimer
+                Relilert
               </Link>
               <label
                 htmlFor="hbr"

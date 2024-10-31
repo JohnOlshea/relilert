@@ -1,12 +1,22 @@
 import Button from "@/components/Button";
-import { HomeTableProps, IMonitorDocument } from "@/interfaces/monitor.interface";
+import {
+  HomeTableProps,
+  IMonitorDocument,
+} from "@/interfaces/monitor.interface";
 import clsx from "clsx";
 import { upperCase } from "lodash";
-import { FC, ReactElement } from "react";
-import { FaCircleNotch, FaArrowDown, FaArrowUp, FaPlay, FaPause, FaPencilAlt, FaTrashAlt } from "react-icons/fa";
+import { FC, ReactElement, useCallback, useContext } from "react";
+import {
+  FaCircleNotch,
+  FaArrowDown,
+  FaArrowUp,
+  FaPlay,
+} from "react-icons/fa";
 import HomeTableBtnGroup from "./HometTableBtnGroup";
 import HealthBar from "@/components/HealthBar";
 import { convertFrequency, timeFromNow } from "@/utils/utils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { MonitorContext } from "@/context/MonitorContext";
 
 const DEFAULT_DURATION = 24;
 
@@ -15,9 +25,19 @@ const HomeTable: FC<HomeTableProps> = ({
   limit,
   autoRefreshLoading,
 }): ReactElement => {
+  const { dispatch } = useContext(MonitorContext);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const navigateToStatusPage = (monitor: IMonitorDocument): void => {
     // 24 is the default duration
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('active', JSON.stringify(monitor.active));
+    router.push(`/uptime/view/${monitor.type}/${monitor.id}/${DEFAULT_DURATION}?${params}`);
+    dispatch({
+      type: 'monitor',
+      payload: monitor
+    });
   };
 
   return (
@@ -104,11 +124,7 @@ const HomeTable: FC<HomeTableProps> = ({
                 </td>
                 <td className="px-6 py-5">{convertFrequency(monitor.frequency)}</td>
                 <td className="px-6 py-4 max-w-[270px] whitespace-nowrap text-ellipsis truncate">
-                  {monitor.lastChanged ? (
-                    <>{timeFromNow(`${monitor.lastChanged}`)}</>
-                  ) : (
-                    "None"
-                  )}
+                  {monitor.lastChanged ? <>{timeFromNow(`${monitor.lastChanged}`)}</> : "None"}
                 </td>
                 <td className="px-6 py-4">
                   <HomeTableBtnGroup monitor={monitor} />

@@ -24,7 +24,7 @@ const Sidebar: FC<{ type: string }> = ({ type }): ReactElement => {
               className="relative z-10 px-2.5 flex items-center gap-2 cursor-pointer justify-center self-center text-2xl font-bold text-[#4aa1f3]"
             >
               <FaTv />
-              Uptimer
+              Relilert
             </Link>
             <i className='bi bi-x cursor-pointer ml-28 lg:hidden'></i>
           </div>

@@ -54,10 +54,10 @@ export const useUptimeView = (params: { slug: string[] }): IUseUptimeView => {
 
   const { data } = useQuery(GET_HEART_BEATS, {
     /**
-     * For the view's page, we always want to make a network request to get new data
-     * for a monitor heartbeats.
-     * If the monitor is active, make a network request and don't save the data in the cache.
-     * If the monitor is inactive, check the cache first if the data exist, else make a network request.
+     * Make a network request to get heartbeat data
+     * for a monitor.
+     * If monitor is active, make a network request.
+     * If monitor is inactive, check the cache, else make a network request.
      */
     fetchPolicy: JSON.parse(`${searchParams.get('active')}`) ? 'no-cache' : 'cache-first',
     variables: { type, monitorId, duration }
