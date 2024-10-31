@@ -1,6 +1,6 @@
 import { MonitorContext } from '@/context/MonitorContext';
-import { CHECK_CURRENT_USER } from '@/queries/auth';
-import { useQuery } from '@apollo/client';
+import { CHECK_CURRENT_USER, LOGOUT_USER } from '@/queries/auth';
+import { useMutation, useQuery } from '@apollo/client';
 import React, { FC, ReactElement, ReactNode, useContext, useEffect } from 'react';
 import PageLoader from './PageLoader';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
@@ -13,23 +13,27 @@ interface IProtectRouteProps {
 
 type NavigateProps = { to: string, type: string };
 
-function Navigate({ to, type }: NavigateProps): null {
+function Navigate({ to, type}: NavigateProps): null {
   const router: AppRouterInstance = useRouter();
   const { dispatch } = useContext(MonitorContext);
+  const [logout, { client }] = useMutation(LOGOUT_USER);
 
   useEffect(() => {
     if (type === 'logout') {
-      dispatch({
-        type: 'dataUpdate',
-        payload: {
-          user: null,
-          notifications: []
-        }
+      logout().then(async () => {
+        dispatch({
+          type: 'dataUpdate',
+          payload: {
+            user: null,
+            notifications: []
+          }
+        });
+        client.clearStore();
+        await apolloPersistor?.purge();
       });
-      apolloPersistor?.purge();
     }
     router.push(to);
-  }, [type, to, router, dispatch]);
+  }, [type, to, router, dispatch, client, logout]);
 
   return null;
 }
