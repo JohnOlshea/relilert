@@ -23,7 +23,7 @@ const Login: FC = (): ReactElement => {
           <div className="mb-5 flex flex-col justify-between text-gray-600">
             <Link href="/" className="w-24 flex mx-auto mb-4 cursor-pointer">
               <Image
-                src="https://i.ibb.co/SBvxyHC/uptimer.png"
+                src="https://res.cloudinary.com/dc3apwy48/image/upload/v1730382313/d33tzkwfyzex2naa7jgu.png"
                 alt="API Monitor"
                 className="w-full"
                 width={400}
