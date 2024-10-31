@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { FC, ReactElement } from "react";
 import { FaArrowUp, FaPlay, FaArrowDown, FaCircleNotch, FaPause, FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 import HomeTableBtnGroup from "./HometTableBtnGroup";
+import ResponseChart from "@/components/ResponseChart";
 
 const DEFAULT_DURATION = 24;
 
@@ -38,7 +39,7 @@ const HomeGrid: FC<HomeTableProps> = ({ monitors, limit, autoRefreshLoading }): 
             <div className="font-bold text-blue-400 cursor-pointer" onClick={() => navigateToStatusPage(monitor)}>{monitor.name}</div>
             <div className="mt-3 w-fulls">
               <span className="font-bold text-sm mb-2">Response Times (ms)</span>
-              Chart Area
+              <ResponseChart heartBeats={monitor.heartbeats!} showLabel={false} />
             </div>
             <div className="mt-3">
               <Feature title="Status">
