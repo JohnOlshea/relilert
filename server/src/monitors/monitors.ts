@@ -1,12 +1,12 @@
 import { Socket } from 'net';
+import { Agent, request, RequestOptions } from 'https';
+import { ClientRequest, IncomingMessage } from 'http';
+import { PeerCertificate, TLSSocket } from 'tls';
 
 import { IMonitorResponse } from '@app/interfaces/monitor.interface';
 import { MongoClient } from 'mongodb';
 import { createClient } from 'redis';
 import { ISSLInfo } from '@app/interfaces/ssl.interface';
-import { Agent, request, RequestOptions } from 'https';
-import { ClientRequest, IncomingMessage } from 'http';
-import { PeerCertificate, TLSSocket } from 'tls';
 import { getDaysRemaining } from '@app/utils/utils';
 
 /**
@@ -61,7 +61,7 @@ export const redisPing = (connectionString: string): Promise<IMonitorResponse> =
       url: connectionString
     });
     client.on('error', (error) => {
-      if (client.isOpen) {
+      if(client.isOpen) {
         client.disconnect();
       }
       reject({
@@ -81,7 +81,7 @@ export const redisPing = (connectionString: string): Promise<IMonitorResponse> =
         });
       }
       client.ping().then(() => {
-        if (client.isOpen) {
+        if(client.isOpen) {
           client.disconnect();
         }
         resolve({
@@ -102,15 +102,6 @@ export const redisPing = (connectionString: string): Promise<IMonitorResponse> =
   });
 };
 
-/**
- * TCP ping utility to check the availability of a host on a specified port.
- * 
- * @param {string} hostname - The hostname or IP address to ping. Defaults to '127.0.0.1'.
- * @param {number} port - The port number to connect to. Defaults to 80.
- * @param {number} timeout - The timeout period in milliseconds. Defaults to 1000 ms.
- * @returns {Promise<IMonitorResponse>} - A promise that resolves to an object containing the status, 
- *                                         response time, message, and HTTP code of the ping result.
- */
 export const tcpPing = async (hostname: string, port: number, timeout: number): Promise<IMonitorResponse> => {
   return new Promise((resolve, reject) => {
     const socket: Socket = new Socket();

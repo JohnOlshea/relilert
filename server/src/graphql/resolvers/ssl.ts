@@ -43,7 +43,6 @@ export const SSLMonitorResolver = {
       authenticateGraphQLRoute(req);
       const { monitorId, userId, name, active } = args.monitor!;
       const sslMonitors: ISSLMonitorDocument[] = await toggleSSLMonitor(monitorId!, userId, active as boolean);
-      console.log('actv', active)
       if (!active) {
         stopSingleBackgroundJob(name, monitorId!);
       } else {

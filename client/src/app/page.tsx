@@ -35,7 +35,7 @@ const Index: FC = (): ReactElement => {
   return (
     <>
       <IndexHeader />
-      <div className="w-screen min-h-screen relative">
+      <div className="min-h-screen relative">
         <div className="flex flex-col m-auto mt-4 px-6 xl:container md:px-12 lg:px-6">
           <div className="py-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

@@ -1,19 +1,19 @@
-import { IMonitorDocument } from "@app/interfaces/monitor.interface";
-import { IAuthPayload } from "@app/interfaces/user.interface";
-import { CLIENT_URL, JWT_TOKEN } from "@app/server/config";
-import { getAllUsersActiveMonitors, getMonitorById, getUserActiveMonitors, startCreatedMonitors } from "@app/services/monitor.service";
-import { Request } from "express";
-import { GraphQLError } from "graphql";
-import { verify } from "jsonwebtoken";
-import { toLower } from "lodash";
-import { startSingleJob } from "./jobs";
-import { pubSub } from "@app/graphql/resolvers/monitor";
-import logger from "@app/server/logger";
-import { IHeartbeat } from "@app/interfaces/heartbeat.interface";
-import { sendEmail } from "./email";
-import { IEmailLocals } from "@app/interfaces/notification.interface";
-import { ISSLMonitorDocument } from "@app/interfaces/ssl.interface";
-import { getAllUsersActiveSSLMonitors, getSSLMonitorById, sslStatusMonitor } from "@app/services/ssl.service";
+import { IMonitorDocument } from '@app/interfaces/monitor.interface';
+import { IAuthPayload } from '@app/interfaces/user.interface';
+import { CLIENT_URL, JWT_TOKEN } from '@app/server/config';
+import { getAllUsersActiveMonitors, getMonitorById, getUserActiveMonitors, startCreatedMonitors } from '@app/services/monitor.service';
+import { Request } from 'express';
+import { GraphQLError } from 'graphql';
+import { verify } from 'jsonwebtoken';
+import { toLower } from 'lodash';
+import { pubSub } from '@app/graphql/resolvers/monitor';
+import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
+import { IEmailLocals } from '@app/interfaces/notification.interface';
+import { ISSLMonitorDocument } from '@app/interfaces/ssl.interface';
+import { getAllUsersActiveSSLMonitors, getSSLMonitorById, sslStatusMonitor } from '@app/services/ssl.service';
+
+import { startSingleJob } from './jobs';
+import { sendEmail } from './email';
 
 export const appTimeZone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -125,7 +125,6 @@ export const enableAutoRefreshJob = (cookies: string): void => {
   if (enableAutoRefresh) {
     startSingleJob(`${toLower(payload.username)}`, appTimeZone, 10, async () => {
       const monitors: IMonitorDocument[] = await getUserActiveMonitors(payload.id);
-      logger.info('Job is enabled')
       pubSub.publish('MONITORS_UPDATED', {
         monitorsUpdated: {
           userId: payload.id,
@@ -149,11 +148,7 @@ export const uptimePercentage = (heartbeats: IHeartbeat[]): number => {
   return Math.round(((totalHeartbeats - downtimeHeartbeats) / totalHeartbeats) * 100) || 0;
 };
 
-export const emailSender = async (notificationEmails: string,
-  template:
-  string,
-  locals: IEmailLocals
-): Promise<void> => {
+export const emailSender = async (notificationEmails: string, template: string, locals: IEmailLocals): Promise<void> => {
   const emails = JSON.parse(notificationEmails);
   for(const email of emails) {
     await sendEmail(template, email, locals);
@@ -166,6 +161,12 @@ export const locals = (): IEmailLocals => {
     appIcon: 'https://ibb.com/jD45fqX',
     appName: ''
   };
+};
+
+export const testEmaillocals: IEmailLocals = {
+  appLink: `${CLIENT_URL}`,
+  appIcon: 'https://ibb.com/jD45fqX',
+  appName: ''
 };
 
 /**

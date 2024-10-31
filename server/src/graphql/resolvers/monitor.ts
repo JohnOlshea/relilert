@@ -16,7 +16,6 @@ import { appTimeZone, authenticateGraphQLRoute, resumeMonitors, uptimePercentage
 import { some, toLower } from 'lodash';
 import { PubSub } from 'graphql-subscriptions';
 import { IHeartbeat } from '@app/interfaces/heartbeat.interface';
-import { getCertificateInfo } from '@app/monitors/monitors';
 
 export const pubSub: PubSub = new PubSub();
 
@@ -25,8 +24,6 @@ export const MonitorResolver = {
     async getSingleMonitor(_: undefined, { monitorId }: { monitorId: string }, contextValue: AppContext) {
       const { req } = contextValue;
       authenticateGraphQLRoute(req);
-      const result = await getCertificateInfo('https://www.google.com');
-      console.log(result);
       const monitor: IMonitorDocument = await getMonitorById(parseInt(monitorId!));
       return {
         monitors: [monitor]
