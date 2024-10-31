@@ -36,3 +36,12 @@ export const isEmail = (email: string): boolean => {
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
   return regexExp.test(email);
 };
+
+export const setLocalStorageItem = (key: string, value: string): void => {
+  window.localStorage.setItem(key, value);
+};
+
+export const getLocalStorageItem = (key: string) => {
+  const data = window.localStorage.getItem(key) as string;
+  return JSON.parse(data);
+};
