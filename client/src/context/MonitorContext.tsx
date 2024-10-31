@@ -5,11 +5,10 @@ import { INotification } from "@/interfaces/notification.interface";
 import { InitialUpdateType, IUser } from "@/interfaces/user.interface";
 import { Context, createContext, Dispatch, FC, ReactElement, ReactNode, useReducer } from "react";
 
-// TODO: Look into this interface
 export interface StateProps {
   user: IUser | null;
   notifications: INotification[];
-  monitor: IMonitorDocument | null; // Added this line
+  monitor: IMonitorDocument | null;
 }
 
 export interface DispatchProps {

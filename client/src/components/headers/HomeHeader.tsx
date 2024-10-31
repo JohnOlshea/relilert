@@ -8,17 +8,22 @@ import Link from "next/link";
 import { FC, ReactElement, useContext, useEffect, useState } from "react";
 import { FaAlignJustify, FaTimes, FaUserAlt } from "react-icons/fa";
 import Sidebar from "../sidebar/Sidebar";
+import { usePathname } from "next/navigation";
 
 const HomeHeader: FC = (): ReactElement => {
   const { dispatch } = useContext(MonitorContext);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [user, setUser] = useState<IUser>();
+  const pathname = usePathname();
   const [logout, { client }] = useMutation(LOGOUT_USER);
   const userData = apolloClient.readQuery({
     query: CHECK_CURRENT_USER,
   });
-  console.log('user data', userData)
-  
+  const statusPage = pathname.includes('status');
+  const uptimePage = pathname.includes('uptime');
+  const sslPage = pathname.includes('ssl');
+  const contactPage = pathname.includes('contact');
+
   useEffect(() => {
     setUser(userData?.checkCurrentUser?.user);
   }, [userData]);
@@ -45,8 +50,14 @@ const HomeHeader: FC = (): ReactElement => {
           <div className="flex w-full gap-x-4 lg:w-6/12">
             <div className="w-full md:flex">
               <div className="w-full gap-x-4 md:flex">
-                <Link href="/status" className="relative z-10 flex cursor-pointer text-xl font-semibold text-[#4aa1f3]">
-                  Uptime Tests
+                <Link
+                  href="/status"
+                  className="relative z-10 flex cursor-pointer text-xl font-semibold text-[#4aa1f3]"
+                >
+                  {statusPage && 'Uptime Tests'}
+                  {uptimePage && 'Test Details'}
+                  {sslPage && 'SSL Tests'}
+                  {contactPage && 'Contact Groups'}
                 </Link>
               </div>
             </div>

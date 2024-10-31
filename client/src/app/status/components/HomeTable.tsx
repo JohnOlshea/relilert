@@ -12,7 +12,7 @@ import {
   FaArrowUp,
   FaPlay,
 } from "react-icons/fa";
-import HomeTableBtnGroup from "./HometTableBtnGroup";
+import HomeTableBtnGroup from "./HomeTableBtnGroup";
 import HealthBar from "@/components/HealthBar";
 import { convertFrequency, timeFromNow } from "@/utils/utils";
 import { useRouter, useSearchParams } from "next/navigation";

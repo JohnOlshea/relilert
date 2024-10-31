@@ -11,7 +11,7 @@ import {
   FaArrowDown,
   FaCircleNotch,
 } from "react-icons/fa";
-import HomeTableBtnGroup from "./HometTableBtnGroup";
+import HomeTableBtnGroup from "./HomeTableBtnGroup";
 import ResponseChart from "@/components/ResponseChart";
 import { MonitorContext } from "@/context/MonitorContext";
 import { useRouter, useSearchParams } from "next/navigation";
