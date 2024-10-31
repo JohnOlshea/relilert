@@ -32,7 +32,7 @@ const Register: FC = (): ReactElement => {
               />
             </Link>
             <h1 className="flex w-full text-center justify-center text-3xl font-bold mb-2">
-              Create your free Uptimer account
+              Create a free account
             </h1>
           </div>
           <Fragment>

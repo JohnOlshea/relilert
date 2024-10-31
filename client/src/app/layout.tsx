@@ -5,8 +5,12 @@ import { apolloClient } from "@/queries/apolloClient";
 import ApolloProvider from "@/queries/apolloProvider";
 import { ToastContainer } from "react-toastify";
 import { MonitorProvider } from "@/context/MonitorContext";
+import dayjs from "dayjs";
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 const inter = Inter({ subsets: ["latin"] });
+
+dayjs.extend(relativeTime);
 
 export const metadata: Metadata = {
   title: "Uptimer"

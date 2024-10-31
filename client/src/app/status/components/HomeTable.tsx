@@ -5,6 +5,8 @@ import { upperCase } from "lodash";
 import { FC, ReactElement } from "react";
 import { FaCircleNotch, FaArrowDown, FaArrowUp, FaPlay, FaPause, FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 import HomeTableBtnGroup from "./HometTableBtnGroup";
+import HealthBar from "@/components/HealthBar";
+import { convertFrequency, timeFromNow } from "@/utils/utils";
 
 const DEFAULT_DURATION = 24;
 
@@ -98,11 +100,12 @@ const HomeTable: FC<HomeTableProps> = ({
                 </td>
                 <td className="px-6 py-5 flex gap-3">
                   <div className="w-8">{monitor.uptime}%</div>
+                  <HealthBar size="small" heartBeats={monitor.heartbeats!} />
                 </td>
-                <td className="px-6 py-5">{monitor.frequency}</td>
+                <td className="px-6 py-5">{convertFrequency(monitor.frequency)}</td>
                 <td className="px-6 py-4 max-w-[270px] whitespace-nowrap text-ellipsis truncate">
                   {monitor.lastChanged ? (
-                    <>{monitor.lastChanged}</>
+                    <>{timeFromNow(`${monitor.lastChanged}`)}</>
                   ) : (
                     "None"
                   )}
