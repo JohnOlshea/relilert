@@ -1,13 +1,15 @@
 'use client';
 
-// import { IMonitorDocument } from "@/interfaces/monitor.interface";
+import { IMonitorDocument } from "@/interfaces/monitor.interface";
 import { INotification } from "@/interfaces/notification.interface";
 import { InitialUpdateType, IUser } from "@/interfaces/user.interface";
 import { Context, createContext, Dispatch, FC, ReactElement, ReactNode, useReducer } from "react";
 
+// TODO: Look into this interface
 export interface StateProps {
   user: IUser | null;
   notifications: INotification[];
+  monitor: IMonitorDocument | null; // Added this line
 }
 
 export interface DispatchProps {
@@ -27,6 +29,7 @@ interface MonitorContextType {
 const initialValues: StateProps = {
   user: null,
   notifications: [],
+  monitor: null,
 };
 
 export const MonitorContext: Context<MonitorContextType> = createContext<MonitorContextType>({
@@ -37,6 +40,7 @@ export const MonitorContext: Context<MonitorContextType> = createContext<Monitor
 const mainReducer = (state: StateProps, action: DispatchProps): StateProps => ({
   user: stateReducer(state, action).user,
   notifications: stateReducer(state, action).notifications,
+  monitor: state.monitor,
 });
 
 export const MonitorProvider: FC<Props> = ({ children }): ReactElement => {
