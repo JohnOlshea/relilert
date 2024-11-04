@@ -9,6 +9,7 @@ import { FaEye, FaEyeSlash, FaFacebookF, FaGoogle } from "react-icons/fa";
 import { useRegister, useSocialRegister } from "./useRegister";
 import clsx from "clsx";
 import PageLoader from "@/components/PageLoader";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Register: FC = (): ReactElement => {
   const [passwordType, setPasswordType] = useState<string>('password');
@@ -121,8 +122,9 @@ const Register: FC = (): ReactElement => {
           <Button
             type="submit"
             disabled={loading}
-            className="bg-green-500 text-md block w-full cursor-pointer rounded px-8 py-2 text-center font-bold text-white hover:bg-green-400 focus:outline-none"
-            label={`${loading ? 'ACCOUNT CREATION IN PROGRESS...' : 'CREATE FREE ACCOUNT'}`}
+            icon={loading ? <LoadingSpinner color="white" width={20} height={20} /> : null}
+            className="flex justify-center items-center bg-[#2a8e9e] hover:bg-[#71b3be] text-md block w-full cursor-pointer rounded px-8 py-2 text-center font-bold text-white focus:outline-none"
+            label="CREATE FREE ACCOUNT"
           />
         </div>
       </form>

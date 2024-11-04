@@ -34,13 +34,15 @@ const cache: InMemoryCache = new InMemoryCache();
 let apolloPersistor: CachePersistor<NormalizedCacheObject> | null = null;
 
 const initPersistorCache = async (): Promise<void> => {
-  apolloPersistor = new CachePersistor({
-    cache,
-    storage: new LocalStorageWrapper(window.localStorage),
-    debug: false,
-    trigger: 'write'
-  });
-  await apolloPersistor.restore();
+  if (typeof window !== 'undefined') { // Check if running in the browser
+    apolloPersistor = new CachePersistor({
+      cache,
+      storage: new LocalStorageWrapper(window.localStorage),
+      debug: false,
+      trigger: 'write'
+    });
+    await apolloPersistor.restore();
+  }
 };
 
 initPersistorCache();

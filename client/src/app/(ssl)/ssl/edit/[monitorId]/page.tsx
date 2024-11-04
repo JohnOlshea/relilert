@@ -63,7 +63,7 @@ const EditSSLMonitor: FC<EditMonitorProps> = ({ params }): ReactElement => {
               requiredIcon={true}
               type="text"
               topClass="mt-5"
-              labelStart="SSL/TLS URL"
+              labelStart="SSL/TLS URL (without trailling forward slash)"
               className={clsx(
                 "bg-white border border-black text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5",
                 {

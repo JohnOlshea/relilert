@@ -9,6 +9,7 @@ import { FaEye, FaEyeSlash, FaFacebookF, FaGoogle } from "react-icons/fa";
 import clsx from "clsx";
 import PageLoader from "@/components/PageLoader";
 import { useLogin, useSocialLogin } from "./useLogin";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Login: FC = (): ReactElement => {
   const [passwordType, setPasswordType] = useState<string>('password');
@@ -96,8 +97,9 @@ const Login: FC = (): ReactElement => {
           <Button
             type="submit"
             disabled={loading}
-            className="bg-green-500 my-6 text-md block w-full cursor-pointer rounded px-8 py-2 text-center font-bold text-white hover:bg-green-400 focus:outline-none"
-            label={`${loading ? 'LOGIN IN PROGRESS...' : 'LOGIN'}`}
+            icon={loading ? <LoadingSpinner color="white" width={20} height={20} /> : null}
+            className="flex justify-center items-center bg-[#2a8e9e] hover:bg-[#71b3be] my-6 text-md block w-full cursor-pointer rounded px-8 py-2 text-center font-bold text-white focus:outline-none"
+            label="LOGIN"
           />
         </div>
       </form>
